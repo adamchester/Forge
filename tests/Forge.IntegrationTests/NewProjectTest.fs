@@ -33,6 +33,27 @@ let ``Create New Console Application`` () =
     project |> hasName "Sample"
 
 [<Test>]
+let ``Create New Suave Application`` () =
+    let dir = "new_project - create_new_suave_application"
+
+    ["new project -n SampleSuave --dir src -t suave"]
+    |> initTest dir
+
+    let project = dir </> "src" </> "SampleSuave" </> "SampleSuave.fsproj" |> loadProject
+
+    project |> reference "mscorlib"
+    project |> reference "System"
+    project |> reference "System.Core"
+
+    project |> hasFile "SampleSuave.fs"
+
+    project |> hasName "SampleSuave"
+    project.ProjectData.Settings.ProjectGuid.Data.IsSome |> should equal true
+
+    // Suave 2.* requires min v4.6.1
+    project.ProjectData.Settings.TargetFrameworkVersion.Data.Value |> should equal "v4.6.1"
+
+[<Test>]
 let ``Create New Test Application`` () =
     let dir = "new_project - create_new_test_application"
 
